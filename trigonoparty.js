@@ -1,25 +1,32 @@
+let content = document.querySelector(".content");
 let canvas = document.querySelector("canvas");
-canvas.width = document.body.clientWidth;
-canvas.height = document.body.clientHeight;
 
-const w = canvas.width;
-const h = canvas.height;
+const resize = () => {
+  canvas.width = content.clientWidth;
+  canvas.height = content.clientHeight;
+};
 
 const ctx = canvas.getContext("2d");
-const x = w/2;
-const y = h/2;
-const r = h/3;
-const step = 0.5;
-
 const degToRad = deg => (deg/360) * 2 * Math.PI;
 
 let degree = 135;
 
 let fps = 0,
-    cycle = performance.now();
+    cycle = performance.now(),
+    secCycle = cycle;
+
+window.onresize = resize;
+resize();
 
 const draw = () => {
-  if (degree===360) {
+  const w = canvas.width;
+  const h = canvas.height;
+  const x = w/2;
+  const y = h/2;
+  const r = Math.min(w, h)/3;
+  const step = 0.5;
+
+  if (degree === 360) {
     degree = 0;
   }
   
@@ -34,6 +41,10 @@ const draw = () => {
   ctx.imageSmoothingEnabled = true;
   ctx.clearRect(0, 0, w, h);
   
+  ctx.font = '14px Helvatica,sans-serif';
+  ctx.fillStyle = '#cccccc';
+  ctx.fillText(`FPS: ${fps}`, 5, 17);
+
   ctx.lineWidth = 1.5;
   
   ctx.strokeStyle = "#ccc";
@@ -137,13 +148,13 @@ const draw = () => {
   ctx.lineTo(x, y);
   ctx.stroke();
   
-  if (performance.now() - cycle > 1000) {
-    console.log('FPS:', fps);
-    cycle = performance.now();
-    fps = 0;
+  const now = performance.now();
+  if (now - secCycle >= 1000) {
+    secCycle = now;
+    fps = (1000 / (now - cycle)).toFixed(0);
   }
+  cycle = now;
   
-  fps++;
   window.requestAnimationFrame(draw);
 };
 
