@@ -1,107 +1,118 @@
-let content = document.querySelector(".content");
-let canvas = document.querySelector("canvas");
+/**
+ * Get elements.
+ */
+const content = document.querySelector(".content");
+const canvas = document.querySelector("canvas");
 
-const resize = () => {
+/**
+ * Resize handler.
+ */
+const resize = window.onresize = () => {
   canvas.width = content.clientWidth;
   canvas.height = content.clientHeight;
 };
 
-const ctx = canvas.getContext("2d");
-const degToRad = deg => (deg/360) * 2 * Math.PI;
+/**
+ * Consts
+ */
+const tPI = 2 * Math.PI; 
+const COLORS = {
+  gray: '#CCC',
+  green: '#00B52A',
+  purple: '#8700b5',
+  orange: '#f48c42',
+  pink: '#f4427a',
+  blue: '#4286f4',
+  cyan: '#41cdf4',
+};
 
+/**
+ * Helper utils.
+ */
+const degToRad = deg => deg / 360 * tPI;
+
+/**
+ * Prepare canvas context.
+ */
+const ctx = canvas.getContext("2d", { alpha: false });
+ctx.imageSmoothingQuality = "high"
+ctx.imageSmoothingEnabled = true;
+
+/**
+ * Drawing helpers.
+ */
+const $drawText = (text, { x, y, color, size }) => {
+  ctx.font = `${size}px sans-serif`;
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+};
+
+const $drawLine = (fromX, fromY, toX, toY, { color }) => {
+  ctx.beginPath();
+  ctx.lineWidth = 1.5; // Default for now.
+  ctx.strokeStyle = color;
+  ctx.moveTo(fromX, fromY);
+  ctx.lineTo(toX, toY);
+  ctx.stroke();
+};
+
+const $drawCircle = (x, y, r, { color, fill }) => {
+  ctx.beginPath();
+  ctx.lineWidth = 1.5; // Default for now.
+  ctx.strokeStyle = color;
+  ctx.arc(x, y, r, 0, tPI);
+  fill ? ctx.fill() : ctx.stroke();
+};
+
+/**
+ * Drawing block.
+ */
+const drawFPS = () => {
+  $drawText(`FPS: ${FPS || '-'}`, {
+    x: 5,
+    y: 17,
+    color: COLORS.gray,
+    size: 14,
+  });
+};
+
+/**
+ * State
+ */
 let degree = 135;
 
-let fps = 0,
-    cycle = performance.now(),
-    secCycle = cycle;
+/**
+ * FPS Measurement.
+ */
+let FPS = 0,
+    lastDrawTime = performance.now(),
+    lastFPSUpdateTime = lastDrawTime;
 
-window.onresize = resize;
-resize();
-
+/**
+ * Draw scene.
+ */
 const draw = () => {
+  // Constants
   const w = canvas.width;
   const h = canvas.height;
-  const x = w/2;
-  const y = h/2;
-  const r = Math.min(w, h)/3;
-  const step = 0.5;
 
-  if (degree === 360) {
-    degree = 0;
-  }
-  
-  let sin = Math.sin(degToRad(degree));
-  let cos = Math.cos(degToRad(degree));
-  let lineX = x + sin * r;
-  let lineY = y + cos * r;
-  
-  degree += step;
-  
-  ctx.imageSmoothingQuality = "high"
-  ctx.imageSmoothingEnabled = true;
-  ctx.clearRect(0, 0, w, h);
-  
-  ctx.font = '14px Helvatica,sans-serif';
-  ctx.fillStyle = '#cccccc';
-  ctx.fillText(`FPS: ${fps}`, 5, 17);
+  // Calculate core values.
+  const x = w / 2;
+  const y = h / 2;
+  const r = Math.min(w, h) / 3;
 
-  ctx.lineWidth = 1.5;
-  
-  ctx.strokeStyle = "#ccc";
-  ctx.beginPath();
-  ctx.moveTo(0, y);
-  ctx.lineTo(w, y);
-  ctx.stroke();
-  
-  ctx.strokeStyle = "#ccc";
-  ctx.beginPath();
-  ctx.moveTo(x, 0);
-  ctx.lineTo(x, h);
-  ctx.stroke();
+  // Options.
+  const step = 0.05;
 
-  ctx.strokeStyle = "#999";
-  
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.arc(x, y, 20, 0, 2 * Math.PI);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.arc(x, y, 5, 0, 2 * Math.PI);
-  ctx.fill();
-  
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(lineX, lineY);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.arc(lineX, lineY, 10, 0, 2 * Math.PI);
-  ctx.stroke();
-  
-  ctx.beginPath();
-  ctx.arc(lineX, lineY, 5, 0, 2 * Math.PI);
-  ctx.fill();
-  
-  ctx.strokeStyle = "#00b52a";
-  ctx.beginPath();
-  ctx.moveTo(lineX, lineY);
-  ctx.lineTo(x, lineY);
-  ctx.stroke();
-  
-  // tangent
-  ctx.strokeStyle = "#8700b5";
-  ctx.beginPath();
-  ctx.moveTo(lineX, lineY);
-  ctx.lineTo(lineX, y);
-  ctx.stroke();
-  
-  let sinHeight = y - lineY;
-  let cosWidth = lineX - x;
-  
+  // State values.
+  const sin = Math.sin(degToRad(degree));
+  const cos = Math.cos(degToRad(degree));
+  const lineX = x + sin * r;
+  const lineY = y + cos * r;
+  const sinHeight = y - lineY;
+  const cosWidth = lineX - x;
+
+  // Calculate opposite degree.
   let oDegre = 90 - (degree % 90);
   
   if (cosWidth < 0 && sinHeight > 0 || cosWidth > 0 && sinHeight < 0) {
@@ -119,43 +130,62 @@ const draw = () => {
     tanX = lineX - tanDistance;
     cotY = lineY + cotDistance;
   }
+
+  // Clear canvas.
+  ctx.clearRect(0, 0, w, h);
   
-  // tangent
-  ctx.strokeStyle = "#f48c42";
-  ctx.beginPath();
-  ctx.moveTo(tanX, y);
-  ctx.lineTo(lineX, lineY);
-  ctx.stroke();
+  // Draw texts.
+  drawFPS();
   
-  // cotangent
-  ctx.strokeStyle = "#f4427a";
-  ctx.beginPath();
-  ctx.moveTo(lineX, lineY);
-  ctx.lineTo(x, cotY);
-  ctx.stroke();
+  // Draw X Axis
+  $drawLine(0, y, w, y, { color: COLORS.gray });
+  // Draw Y Axis
+  $drawLine(x, 0, x, h, { color: COLORS.gray });
+  // Draw Radius Line
+  $drawLine(x, y, lineX, lineY, { color: COLORS.gray });
+
+  // Draw main circle.
+  $drawCircle(x, y, r, { color: COLORS.gray });
+  // Draw origin point.
+  $drawCircle(x, y, 5, { color: COLORS.gray, fill: true });
+  // Draw origin point perimeter circle.
+  $drawCircle(x, y, 20, { color: COLORS.gray });
+  // Draw radius line end circle.
+  $drawCircle(lineX, lineY, 5, { color: COLORS.gray, fill: true });
+  // Draw radius line end perimeter circle.
+  $drawCircle(lineX, lineY, 10, { color: COLORS.gray });
   
-  // secant
-  ctx.strokeStyle = "#4286f4";
-  ctx.beginPath();
-  ctx.moveTo(tanX, y);
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  
-  // cosecant
-  ctx.strokeStyle = "#41cdf4";
-  ctx.beginPath();
-  ctx.moveTo(x, cotY);
-  ctx.lineTo(x, y);
-  ctx.stroke();
+  // Draw Sinus.
+  $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
+  // Draw Cosinus.
+  $drawLine(lineX, lineY, x, lineY, { color: COLORS.green });
+  // Draw Tangent.
+  $drawLine(tanX, y, lineX, lineY, { color: COLORS.orange });
+  // Draw Cotangent.
+  $drawLine(lineX, lineY, x, cotY, { color: COLORS.pink });
+  // Draw Secant.
+  $drawLine(tanX, y, x, y, { color: COLORS.blue });
+  // Draw Cosecant.
+  $drawLine(x, cotY, x, y, { color: COLORS.cyan });
   
   const now = performance.now();
-  if (now - secCycle >= 1000) {
-    secCycle = now;
-    fps = (1000 / (now - cycle)).toFixed(0);
+  if (now - lastFPSUpdateTime >= 1000) {
+    lastFPSUpdateTime = now;
+    FPS = (1000 / (now - lastDrawTime)).toFixed(0);
   }
-  cycle = now;
-  
+  lastDrawTime = now;
+
+  degree += step;
+
+  if (degree === 360) {
+    degree = 0;
+  }
+
   window.requestAnimationFrame(draw);
 };
 
+/**
+ * Kick start!
+ */
+resize();
 draw();
