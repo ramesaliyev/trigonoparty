@@ -65,9 +65,18 @@ const $drawCircle = (x, y, r, { color, fill }) => {
 };
 
 /**
- * Drawing block.
+ * FPS Calculate.
  */
-const drawFPS = () => {
+const calculateFPS = () => {
+  const now = performance.now();
+
+  if (now - lastFPSUpdateTime >= 1000) {
+    lastFPSUpdateTime = now;
+    FPS = (1000 / (now - lastDrawTime)).toFixed(0);
+  }
+  
+  lastDrawTime = now;
+
   $drawText(`FPS: ${FPS || '-'}`, {
     x: 5,
     y: 17,
@@ -79,7 +88,7 @@ const drawFPS = () => {
 /**
  * State
  */
-let degree = 135;
+let degree = 45;
 
 /**
  * FPS Measurement.
@@ -102,40 +111,33 @@ const draw = () => {
   const r = Math.min(w, h) / 3;
 
   // Options.
-  const step = 0.05;
+  const step = 0.5;
 
   // State values.
-  const sin = Math.sin(degToRad(degree));
+  const sin = -Math.sin(degToRad(degree));
   const cos = Math.cos(degToRad(degree));
-  const lineX = x + sin * r;
-  const lineY = y + cos * r;
+  const lineX = x + cos * r;
+  const lineY = y + sin * r;
   const sinHeight = y - lineY;
   const cosWidth = lineX - x;
 
-  // Calculate opposite degree.
-  let oDegre = 90 - (degree % 90);
+  // Findout the quadrant we are in.
+  const quadrant = { '01': 1, '00': 2, '10': 3, '11': 4 }[`${+(sin>0)}${+(cos>0)}`];
+
+  // Calculate complementary degree of main angle.
+  const coDegree = (quadrant % 2) ? (90 - (degree % 90)) : (degree % 90);
+
+  // Calculate tangent and cotangent distances.
+  const tanOfCoDegree = Math.tan(degToRad(coDegree));
+  const tanDistance = sinHeight / tanOfCoDegree;
+  const cotDistance = cosWidth / (1 / tanOfCoDegree);
   
-  if (cosWidth < 0 && sinHeight > 0 || cosWidth > 0 && sinHeight < 0) {
-    oDegre = (degree % 90);
-  }
-  
-  let tanOfoDegre = Math.tan(degToRad(oDegre));
-  let tanDistance = sinHeight / tanOfoDegre;
-  let cotDistance = cosWidth / (1/tanOfoDegre);
-  
-  let tanX = lineX + tanDistance;
-  let cotY = lineY - cotDistance;
-  
-  if (cosWidth < 0 && sinHeight > 0 || cosWidth > 0 && sinHeight < 0) {
-    tanX = lineX - tanDistance;
-    cotY = lineY + cotDistance;
-  }
+  // Calculate tangent and cotangent start/end positions.
+  const tanX = (quadrant % 2) ? (lineX + tanDistance) : (lineX - tanDistance);
+  const cotY = (quadrant % 2) ? (lineY - cotDistance) : (lineY + cotDistance);
 
   // Clear canvas.
   ctx.clearRect(0, 0, w, h);
-  
-  // Draw texts.
-  drawFPS();
   
   // Draw X Axis
   $drawLine(0, y, w, y, { color: COLORS.gray });
@@ -168,19 +170,18 @@ const draw = () => {
   // Draw Cosecant.
   $drawLine(x, cotY, x, y, { color: COLORS.cyan });
   
-  const now = performance.now();
-  if (now - lastFPSUpdateTime >= 1000) {
-    lastFPSUpdateTime = now;
-    FPS = (1000 / (now - lastDrawTime)).toFixed(0);
-  }
-  lastDrawTime = now;
+  // Calculate FPS.
+  calculateFPS();
 
+  // Increase degre.
   degree += step;
 
+  // Reset at the end of circle.
   if (degree === 360) {
     degree = 0;
   }
 
+  // Animate!
   window.requestAnimationFrame(draw);
 };
 
