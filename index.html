@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Trigonoparty!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no"/>
-    <link rel="stylesheet" type="text/css" href="styles.css?v=anticache.1"
+    <link rel="stylesheet" type="text/css" href="styles.css?v=anticache.2"
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -19,41 +19,44 @@
               <button id="togglePlay" class="button">Stop</button>
             </div>
           </div>
-          <div class="state-table">
-            <div class="row state-table-row">
-              <div class="column state-table-column">
-                degree <input id="stateDeg" type="text" disabled />
+          <details open>
+            <summary>state values</summary>
+            <div class="state-table">
+              <div class="row state-table-row">
+                <div class="column state-table-column">
+                  degree <input id="stateDeg" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  radian <input id="stateRad" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  quandrant <input id="stateQua" type="text" disabled />
+                </div>
               </div>
-              <div class="column state-table-column">
-                radian <input id="stateRad" type="text" disabled />
+              <div class="row state-table-row">
+                <div class="column state-table-column">
+                  sinus <input id="stateSin" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  cosinus <input id="stateCos" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  tangent <input id="stateTan" type="text" disabled />
+                </div>
               </div>
-              <div class="column state-table-column">
-                quandrant <input id="stateQua" type="text" disabled />
+              <div class="row state-table-row">
+                <div class="column state-table-column">
+                  cotangent <input id="stateCot" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  secant <input id="stateSec" type="text" disabled />
+                </div>
+                <div class="column state-table-column">
+                  cosecant <input id="stateCsc" type="text" disabled />
+                </div>
               </div>
             </div>
-            <div class="row state-table-row">
-              <div class="column state-table-column">
-                sinus <input id="stateSin" type="text" disabled />
-              </div>
-              <div class="column state-table-column">
-                cosinus <input id="stateCos" type="text" disabled />
-              </div>
-              <div class="column state-table-column">
-                tangent <input id="stateTan" type="text" disabled />
-              </div>
-            </div>
-            <div class="row state-table-row">
-              <div class="column state-table-column">
-                cotangent <input id="stateCot" type="text" disabled />
-              </div>
-              <div class="column state-table-column">
-                secant <input id="stateSec" type="text" disabled />
-              </div>
-              <div class="column state-table-column">
-                cosecant <input id="stateCsc" type="text" disabled />
-              </div>
-            </div>
-          </div>
+          </details>
           <details open>
             <summary id="degreeTitle">degree (-)</summary>
             <div class="row">
@@ -96,7 +99,7 @@
         </aside>
       </div>
     </div>
-    <script src="trigonoparty.js?v=anticache.1"></script>
+    <script src="trigonoparty.js?v=anticache.2"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
       // DOM Helpers

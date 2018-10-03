@@ -23,11 +23,17 @@
 
   /**
    * Resize handler.
+   * Check if size actually changed.
    */
   const resize = () => {
-    canvas.width = canvasWrapper.clientWidth;
-    canvas.height = canvasWrapper.clientHeight;
-    config.radius = null;
+    const width = canvasWrapper.clientWidth;
+    const height = canvasWrapper.clientHeight;
+    
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      config.radius = null;
+    }
   };
 
   /**
