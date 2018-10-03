@@ -10,9 +10,116 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div class="root">
       <div class="content">
-          <canvas id='canvas' />
+        <div class="canvas-wrapper">
+          <canvas class="canvas" id="canvas" />
+        </div>
+        <aside class="drawer">
+          <div class="row">
+            <div class="column">
+              <button id="togglePlay" class="button">Stop</button>
+            </div>
+          </div>
+          <details>
+            <summary id="radiusTitle">radius (-)</summary>
+            <div class="row">
+              <div class="column">
+                <input id="radiusRange" type="range" min="0" max="300" step="5" />
+              </div>
+              <div class="column input">
+                <input id="radiusInput" type="number" min="0" max="300" step="5" />
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary id="stepTitle">step (-)</summary>
+            <div class="row">
+              <div class="column">
+                <input id="stepRange" type="range" min="0" max="1" step="0.01" />
+              </div>
+              <div class="column input">
+                <input id="stepInput" type="number" min="0" max="1" step="0.01" />
+              </div>
+            </div>
+          </details>
+        </aside>
       </div>
     </div>
     <script src="trigonoparty.js"></script>
+    <script>
+      // DOM Helpers
+      const DOM = {
+        getById: id => document.getElementById(id),
+        on: (element, event, fn) => element.addEventListener(event, fn),
+      };
+      
+      // DOM Collections.
+      const elements = [
+        'togglePlay',
+        'degreeRange',
+        'degreeInput',
+        'radiusTitle',
+        'radiusRange',
+        'radiusInput',
+        'stepTitle',
+        'stepRange',
+        'stepInput',
+      ];
+      const $el = {};
+      
+      // Collect all elements.
+      elements.forEach(id => $el[id] = DOM.getById(id))
+
+      // 
+      const createInputCluster = (configKey, rangeInput, textInput, label) =>
+        (event) => {
+          const value = +event.target.value || +tp.config[configKey];
+          tp.config[configKey] = value;
+          
+          if (rangeInput && event.target !== rangeInput) {
+            rangeInput.value = value;
+          }
+
+          if (textInput && event.target !== textInput) {
+            textInput.value = value;
+          }
+
+          if (label) {
+            label.innerText = `${configKey} (${value})`;  
+          }
+        };
+
+      //
+      const togglePlayClick = () => {
+        tp.config.play = !tp.config.play;
+        tp.draw();
+        $el.togglePlay.innerText = tp.config.play ? 'Stop' : 'Start';
+      }
+
+      //
+      const radiusChange = createInputCluster('radius', radiusRange, radiusInput, radiusTitle);
+      const stepChange = createInputCluster('step', stepRange, stepInput, stepTitle);
+
+      //
+      radiusChange({ target: { value: tp.config.radius.toFixed(0) } });
+      stepChange({ target: {} });
+
+      //
+      window.addEventListener('resize', () => {
+        setTimeout(() => {
+          radiusChange({ target: { value: tp.config.radius.toFixed(0) } });
+        });
+      });
+
+      // 
+      DOM.on($el.togglePlay, 'click', togglePlayClick);
+      DOM.on($el.radiusRange, 'change', radiusChange);
+      DOM.on($el.radiusRange, 'input', radiusChange);
+      DOM.on($el.radiusInput, 'change', radiusChange);
+      DOM.on($el.radiusInput, 'input', radiusChange);
+      DOM.on($el.stepRange, 'change', stepChange);
+      DOM.on($el.stepRange, 'input', stepChange);
+      DOM.on($el.stepInput, 'change', stepChange);
+      DOM.on($el.stepInput, 'input', stepChange);
+    </script>
   </body>
 </html>
