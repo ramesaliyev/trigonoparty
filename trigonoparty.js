@@ -169,19 +169,21 @@
     // Draw radius line end perimeter circle.
     $drawCircle(lineX, lineY, 10, { color: COLORS.gray });
     
-    // Draw Sinus.
-    $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
-    // Draw Cosinus.
-    $drawLine(lineX, lineY, x, lineY, { color: COLORS.green });
-    // Draw Tangent.
-    $drawLine(tanX, y, lineX, lineY, { color: COLORS.orange });
-    // Draw Cotangent.
-    $drawLine(lineX, lineY, x, cotY, { color: COLORS.pink });
-    // Draw Secant.
-    $drawLine(tanX, y, x, y, { color: COLORS.blue });
-    // Draw Cosecant.
-    $drawLine(x, cotY, x, y, { color: COLORS.cyan });
-    
+    if (degree % 90) {
+      // Draw Sinus.
+      $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
+      // Draw Cosinus.
+      $drawLine(lineX, lineY, x, lineY, { color: COLORS.green });
+      // Draw Tangent.
+      $drawLine(tanX, y, lineX, lineY, { color: COLORS.orange });
+      // Draw Cotangent.
+      $drawLine(lineX, lineY, x, cotY, { color: COLORS.pink });
+      // Draw Secant.
+      $drawLine(tanX, y, x, y, { color: COLORS.blue });
+      // Draw Cosecant.
+      $drawLine(x, cotY, x, y, { color: COLORS.cyan });
+    }
+
     // Calculate FPS.
     config.play && calculateFPS();
 
