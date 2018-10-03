@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Trigonoparty!</title>
-    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no"/>
     <link rel="stylesheet" type="text/css" href="styles.css"
   </head>
   <body>
@@ -26,7 +26,7 @@
                 <input id="radiusRange" type="range" min="0" max="300" step="5" />
               </div>
               <div class="column input">
-                <input id="radiusInput" type="number" min="0" max="300" step="5" />
+                <input id="radiusInput" type="number" min="0" max="300" pattern="\d*" />
               </div>
             </div>
           </details>
@@ -37,7 +37,7 @@
                 <input id="stepRange" type="range" min="0" max="1" step="0.01" />
               </div>
               <div class="column input">
-                <input id="stepInput" type="number" min="0" max="1" step="0.01" />
+                <input id="stepInput" type="number" min="0" max="1" pattern="\d*" step="0.01" />
               </div>
             </div>
           </details>
