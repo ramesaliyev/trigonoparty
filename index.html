@@ -19,6 +19,52 @@
               <button id="togglePlay" class="button">Stop</button>
             </div>
           </div>
+          <div class="state-table">
+            <div class="row state-table-row">
+              <div class="column state-table-column">
+                degree <input id="stateDeg" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                radian <input id="stateRad" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                quandrant <input id="stateQua" type="text" disabled />
+              </div>
+            </div>
+            <div class="row state-table-row">
+              <div class="column state-table-column">
+                sinus <input id="stateSin" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                cosinus <input id="stateCos" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                tangent <input id="stateTan" type="text" disabled />
+              </div>
+            </div>
+            <div class="row state-table-row">
+              <div class="column state-table-column">
+                cotangent <input id="stateCot" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                secant <input id="stateSec" type="text" disabled />
+              </div>
+              <div class="column state-table-column">
+                cosecant <input id="stateCsc" type="text" disabled />
+              </div>
+            </div>
+          </div>
+          <details open>
+            <summary id="degreeTitle">degree (-)</summary>
+            <div class="row">
+              <div class="column">
+                <input id="degreeRange" type="range" min="-1" max="361" step="1" />
+              </div>
+              <div class="column input">
+                <input id="degreeInput" type="number" min="-1" max="361" pattern="\d*" />
+              </div>
+            </div>
+          </details>
           <details>
             <summary id="radiusTitle">radius (-)</summary>
             <div class="row">
@@ -41,10 +87,17 @@
               </div>
             </div>
           </details>
+          <div class="separator"></div>
+          <div class="row">
+            <div class="column">
+              <a class="github-button" href="https://github.com/ramesaliyev/trigonoparty" data-icon="octicon-star" aria-label="Star ramesaliyev/trigonoparty on GitHub">Star</a>
+            </div>
+          </div>
         </aside>
       </div>
     </div>
     <script src="trigonoparty.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
       // DOM Helpers
       const DOM = {
@@ -55,14 +108,12 @@
       // DOM Collections.
       const elements = [
         'togglePlay',
-        'degreeRange',
-        'degreeInput',
-        'radiusTitle',
-        'radiusRange',
-        'radiusInput',
-        'stepTitle',
-        'stepRange',
-        'stepInput',
+        'stateDeg', 'stateRad', 'stateQua',
+        'stateSin', 'stateCos', 'stateTan',
+        'stateCot', 'stateSec', 'stateCsc',
+        'degreeTitle', 'degreeRange', 'degreeInput',
+        'radiusTitle', 'radiusRange', 'radiusInput',
+        'stepTitle', 'stepRange', 'stepInput',
       ];
       const $el = {};
       
@@ -70,11 +121,27 @@
       elements.forEach(id => $el[id] = DOM.getById(id))
 
       // 
-      const createInputCluster = (configKey, rangeInput, textInput, label) =>
-        (event) => {
-          const value = +event.target.value || +tp.config[configKey];
-          tp.config[configKey] = value;
-          
+      const createControlCluster = (
+        key,
+        collection,
+        name,
+        {
+          toFixed,
+          updateOnResize,
+          updateOnEveryFrame,
+        } = {}
+      ) => {
+        const rangeInput = $el[`${name}Range`];
+        const textInput = $el[`${name}Input`];
+        const label = $el[`${name}Title`];
+
+        const eventListener = (event, updateSelfOnly) => {
+          const value = event.target.value;
+
+          if (!updateSelfOnly) {
+            tp[collection][key] = +value;
+          }
+
           if (rangeInput && event.target !== rangeInput) {
             rangeInput.value = value;
           }
@@ -84,42 +151,72 @@
           }
 
           if (label) {
-            label.innerText = `${configKey} (${value})`;  
+            label.innerText = `${key} (${value})`;  
+          }
+        };
+      
+        const getAndSetValue = () => {
+          let initialValue = tp[collection][key];
+
+          if (typeof toFixed !== 'undefined') {
+            initialValue = initialValue.toFixed(toFixed)
+          }
+          
+          eventListener({ target: { value: initialValue } }, true);
+
+          if (updateOnEveryFrame) {
+            window.requestAnimationFrame(getAndSetValue);
           }
         };
 
-      //
-      const togglePlayClick = () => {
-        tp.config.play = !tp.config.play;
-        tp.draw();
-        $el.togglePlay.innerText = tp.config.play ? 'Stop' : 'Start';
+        if (rangeInput) {
+          DOM.on(rangeInput, 'change', eventListener);
+          DOM.on(rangeInput, 'input', eventListener);
+        }
+
+        if (textInput) {
+          DOM.on(textInput, 'change', eventListener);
+          DOM.on(textInput, 'input', eventListener);
+        }
+
+        getAndSetValue();
+
+        updateOnResize && window.addEventListener('resize', () => setTimeout(getAndSetValue));
       }
 
-      //
-      const radiusChange = createInputCluster('radius', radiusRange, radiusInput, radiusTitle);
-      const stepChange = createInputCluster('step', stepRange, stepInput, stepTitle);
-
-      //
-      radiusChange({ target: { value: tp.config.radius.toFixed(0) } });
-      stepChange({ target: {} });
-
-      //
-      window.addEventListener('resize', () => {
-        setTimeout(() => {
-          radiusChange({ target: { value: tp.config.radius.toFixed(0) } });
-        });
+      createControlCluster('degree', 'state', 'degree', {
+        toFixed: 0, updateOnEveryFrame: true,
       });
 
-      // 
-      DOM.on($el.togglePlay, 'click', togglePlayClick);
-      DOM.on($el.radiusRange, 'change', radiusChange);
-      DOM.on($el.radiusRange, 'input', radiusChange);
-      DOM.on($el.radiusInput, 'change', radiusChange);
-      DOM.on($el.radiusInput, 'input', radiusChange);
-      DOM.on($el.stepRange, 'change', stepChange);
-      DOM.on($el.stepRange, 'input', stepChange);
-      DOM.on($el.stepInput, 'change', stepChange);
-      DOM.on($el.stepInput, 'input', stepChange);
+      createControlCluster('radius', 'config', 'radius', {
+        toFixed: 0, updateOnResize: true,
+      });
+
+      createControlCluster('step', 'config', 'step');
+
+      DOM.on($el.togglePlay, 'click', () => {
+        tp.config.play = !tp.config.play;
+        $el.togglePlay.innerText = tp.config.play ? 'Stop' : 'Start';
+        tp.draw();
+      });
+
+      const updateStateValues = () => {
+        const sin = +tp.state.sin.toFixed(3);
+        const cos = +tp.state.cos.toFixed(3);
+
+        $el.stateDeg.value = tp.state.degree.toFixed(3);
+        $el.stateRad.value = tp.state.degreeInRad.toFixed(3);
+        $el.stateQua.value = tp.state.quadrant;
+        $el.stateSin.value = sin.toFixed(3);
+        $el.stateCos.value = cos.toFixed(3);
+        $el.stateTan.value = cos === 0 ? 'Undefined' : (sin / cos).toFixed(3);
+        $el.stateCot.value = sin === 0 ? 'Undefined' : (cos / sin).toFixed(3);
+        $el.stateSec.value = cos === 0 ? 'Undefined' : (1 / cos).toFixed(3);
+        $el.stateCsc.value = sin === 0 ? 'Undefined' : (1 / sin).toFixed(3);
+
+        window.requestAnimationFrame(updateStateValues);
+      };
+      updateStateValues();
     </script>
   </body>
 </html>

@@ -115,6 +115,31 @@ summary {
   padding: 0;
 }
 
+.separator {
+  margin: 20px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.state-table {
+  padding: 10px 0;
+  margin: 20px 0;
+  border: solid #ccc;
+  border-width: 1px 0;
+}
+
+.state-table-row {
+}
+
+.state-table-column {
+  font-size: 12px;
+  text-align: center;
+}
+
+.state-table-column input {
+  margin-top: 5px;
+  text-align: center;
+}
+
 @media only screen and (max-width:600px){
   html, body, .root {
     overflow: auto;

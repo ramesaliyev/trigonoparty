@@ -9,6 +9,13 @@
   };
 
   /**
+   * Global state.
+   */
+  const state = {
+    degree: 0,
+  };
+
+  /**
    * Get elements.
    */
   const canvasWrapper = document.querySelector(".canvas-wrapper");
@@ -29,6 +36,7 @@
   const tPI = 2 * Math.PI; 
   const COLORS = {
     gray: '#CCC',
+    night: '#34495e',
     green: '#00B52A',
     purple: '#8700b5',
     orange: '#f48c42',
@@ -52,25 +60,26 @@
   /**
    * Drawing helpers.
    */
-  const $drawText = (text, { x, y, color, size }) => {
+  const $drawText = (x, y, text, { color = COLORS.gray, size = 14 } = {}) => {
     ctx.font = `${size}px sans-serif`;
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
   };
 
   const $drawLine = (fromX, fromY, toX, toY, { color }) => {
-    ctx.beginPath();
     ctx.lineWidth = 1.5; // Default for now.
     ctx.strokeStyle = color;
+    ctx.beginPath();
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
     ctx.stroke();
   };
 
   const $drawCircle = (x, y, r, { color, fill }) => {
-    ctx.beginPath();
     ctx.lineWidth = 1.5; // Default for now.
     ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.beginPath();
     ctx.arc(x, y, r, 0, tPI);
     fill ? ctx.fill() : ctx.stroke();
   };
@@ -88,18 +97,8 @@
     
     lastDrawTime = now;
 
-    $drawText(`FPS: ${FPS || '-'}`, {
-      x: 5,
-      y: 17,
-      color: COLORS.gray,
-      size: 14,
-    });
+    $drawText(5, 17, `FPS: ${FPS || '-'}`);
   };
-
-  /**
-   * State
-   */
-  let degree = 45;
 
   /**
    * FPS Measurement.
@@ -123,10 +122,12 @@
 
     // Options.
     const step = config.step;
+    const degree = state.degree;
 
     // State values.
-    const sin = -Math.sin(degToRad(degree));
-    const cos = Math.cos(degToRad(degree));
+    const degreeInRad = degToRad(degree);
+    const sin = -Math.sin(degreeInRad);
+    const cos = Math.cos(degreeInRad);
     const lineX = x + cos * r;
     const lineY = y + sin * r;
     const sinHeight = y - lineY;
@@ -155,7 +156,7 @@
     // Draw Y Axis
     $drawLine(x, 0, x, h, { color: COLORS.gray });
     // Draw Radius Line
-    $drawLine(x, y, lineX, lineY, { color: COLORS.gray });
+    $drawLine(x, y, lineX, lineY, { color: COLORS.night });
 
     // Draw main circle.
     $drawCircle(x, y, r, { color: COLORS.gray });
@@ -185,12 +186,22 @@
     config.play && calculateFPS();
 
     // Increase degre.
-    config.play && (degree += step);
+    config.play && (state.degree += step);
 
     // Reset at the end of circle.
-    if (degree === 360) {
-      degree = 0;
+    if (state.degree > 360) {
+      state.degree %= 360;
+    } else if (state.degree < 0) {
+      state.degree += 360;
     }
+
+    // Set other states.
+    state.degreeInRad = degreeInRad;
+    state.sin = -sin;
+    state.cos = cos;
+    state.sinHeight = sinHeight;
+    state.cosWidth = cosWidth;
+    state.quadrant = quadrant;
 
     // Animate!
     window.requestAnimationFrame(draw);
@@ -209,5 +220,6 @@
   window.tp = {
     config,
     draw,
+    state,
   };
 }
