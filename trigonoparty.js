@@ -5,14 +5,14 @@
   const config = {
     play: true,
     radius: null,
-    step: 0.05,
+    step: 0.01,
   };
 
   /**
    * Global state.
    */
   const state = {
-    degree: 0,
+    degree: 45,
   };
 
   /**
@@ -66,10 +66,31 @@
   /**
    * Drawing helpers.
    */
-  const $drawText = (x, y, text, { color = COLORS.gray, size = 14 } = {}) => {
+  const $drawText = (x, y, text, {
+    color = COLORS.gray,
+    size = 14,
+    angle = 0,
+    align = 'center',
+    baseline = 'bottom',
+  } = {}) => {
     ctx.font = `${size}px sans-serif`;
+
+    if (angle) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(degToRad(angle));
+      x = 0;
+      y = 0;
+    }
+
+    ctx.textBaseline = baseline;
+    ctx.textAlign = align;
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
+
+    if (angle) {
+      ctx.restore();
+    }
   };
 
   const $drawLine = (fromX, fromY, toX, toY, { color }) => {
@@ -91,27 +112,24 @@
   };
 
   /**
-   * FPS Calculate.
+   * FPS Calculation.
    */
+  let FPS = 0;
+  let lastDrawTime = performance.now();
+  let lastFPSUpdateTime = lastDrawTime;
+
   const calculateFPS = () => {
     const now = performance.now();
 
-    if (now - lastFPSUpdateTime >= 1000) {
+    if (now - lastFPSUpdateTime >= 100) {
       lastFPSUpdateTime = now;
       FPS = (1000 / (now - lastDrawTime)).toFixed(0);
     }
     
     lastDrawTime = now;
 
-    $drawText(5, 17, `FPS: ${FPS || '-'}`);
+    return FPS;
   };
-
-  /**
-   * FPS Measurement.
-   */
-  let FPS = 0,
-      lastDrawTime = performance.now(),
-      lastFPSUpdateTime = lastDrawTime;
 
   /**
    * Draw scene.
@@ -141,9 +159,10 @@
 
     // Findout the quadrant we are in.
     const quadrant = { '01': 1, '00': 2, '10': 3, '11': 4 }[`${+(sin>0)}${+(cos>0)}`];
+    const evenQuad = (quadrant % 2);
 
     // Calculate complementary degree of main angle.
-    const coDegree = (quadrant % 2) ? (90 - (degree % 90)) : (degree % 90);
+    const coDegree = evenQuad ? (90 - (degree % 90)) : (degree % 90);
 
     // Calculate tangent and cotangent distances.
     const tanOfCoDegree = Math.tan(degToRad(coDegree));
@@ -151,8 +170,8 @@
     const cotDistance = cosWidth / (1 / tanOfCoDegree);
     
     // Calculate tangent and cotangent start/end positions.
-    const tanX = (quadrant % 2) ? (lineX + tanDistance) : (lineX - tanDistance);
-    const cotY = (quadrant % 2) ? (lineY - cotDistance) : (lineY + cotDistance);
+    const tanX = evenQuad ? (lineX + tanDistance) : (lineX - tanDistance);
+    const cotY = evenQuad ? (lineY - cotDistance) : (lineY + cotDistance);
 
     // Clear canvas.
     ctx.clearRect(0, 0, w, h);
@@ -175,6 +194,7 @@
     // Draw radius line end perimeter circle.
     $drawCircle(lineX, lineY, 10, { color: COLORS.gray });
     
+    // Dont draw on right angles.
     if (degree % 90) {
       // Draw Sinus.
       $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
@@ -188,10 +208,27 @@
       $drawLine(tanX, y, x, y, { color: COLORS.blue });
       // Draw Cosecant.
       $drawLine(x, cotY, x, y, { color: COLORS.cyan });
+
+      // Draw radius text.
+      $drawText(x + (lineX - x) / 2, y + (lineY - y) / 2, 'radius', { color: COLORS.night, angle: -degree });
+      // Draw sinus text.
+      $drawText(lineX + 1, y + (lineY - y) / 2, 'sinus', { color: COLORS.purple, angle: 90 });
+      // Draw cosinus text.
+      $drawText(x + (lineX - x) / 2, lineY - 2, 'cosinus', { color: COLORS.green });
+
+      // Draw tangent text.
+      $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, 'tangent', { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
+      // Draw cotangent text.
+      $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, 'cotangent', { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
+
+      // Draw secant text.
+      $drawText(x + (tanX - x) / 2, y + 17, 'secant', { color: COLORS.blue });
+      // Draw cosecant text.
+      $drawText(x - 17, y + (cotY - y) / 2, 'cosecant', { color: COLORS.cyan, angle: 90 });
     }
 
     // Calculate FPS.
-    config.play && calculateFPS();
+    config.play && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
 
     // Increase degre.
     config.play && (state.degree += step);
