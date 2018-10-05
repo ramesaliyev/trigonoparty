@@ -36,6 +36,15 @@
   };
 
   /**
+   * Private state.
+   */
+  const $state = {
+    x: 0,
+    y: 0,
+    drag: false,
+  };
+
+  /**
    * Get elements.
    */
   const canvasWrapper = document.querySelector(".canvas-wrapper");
@@ -160,8 +169,8 @@
     const h = canvas.height;
 
     // Calculate core values.
-    const x = w / 2;
-    const y = h / 2;
+    const x = $state.x = w / 2;
+    const y = $state.y = h / 2;
     const r = config.radius = config.radius || Math.min(w, h) / 3;
 
     // Options.
@@ -248,11 +257,12 @@
     // Calculate FPS.
     config.draw.nameFPS && config.play && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
 
-    // Draw name of author.
+    // Draw name of author and help.
     config.draw.nameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
+    config.draw.nameCredits && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
 
     // Increase degre.
-    config.play && (state.degree += step);
+    config.play && !$state.drag && (state.degree += step);
 
     // Reset at the end of circle.
     if (state.degree > 360) {
@@ -272,6 +282,43 @@
     // Animate!
     window.requestAnimationFrame(draw);
   };
+
+  /**
+   * Calculate and set degree from mouse position.
+   */
+  const setDegreeByClientPosition = (clientX, clienY) => {
+    const opposite = -(clienY - $state.y);
+    const adjacent = clientX - $state.x;
+    let degree = Math.atan(opposite / adjacent) * 360 / tPI;
+
+    if (adjacent < 0) {
+      degree += 180;
+    }
+    
+    state.degree = degree;
+  };
+
+  /**
+   * Listen for canvas interaction!
+   */
+  canvas.addEventListener('mousedown', event => {
+    $state.drag = true;
+    setDegreeByClientPosition(
+      event.offsetX,
+      event.offsetY
+    );
+  });
+
+  canvas.addEventListener('mousemove', event => {
+    $state.drag && setDegreeByClientPosition(
+      event.offsetX,
+      event.offsetY
+    );
+  });
+
+  document.body.addEventListener('mouseup', () => {
+    $state.drag = false;
+  });
 
   /**
    * Kick start!
