@@ -10,16 +10,13 @@ html, body, .root {
 }
 
 button, input, details, summary {
+  display: block;
   margin: 0;
   padding: 0;
   width: 100%;
   background: #fff;
   outline: none;
   box-sizing: border-box; 
-}
-
-input[type='checkbox'] {
-  width: auto;
 }
 
 button, input {
@@ -44,6 +41,12 @@ input {
   line-height: 16px;
   height: 32px;
   padding: 5px;
+}
+
+input[type='checkbox'] {
+  width: auto;
+  height: auto;
+  margin: 8px 0;
 }
 
 details {
@@ -157,10 +160,6 @@ summary {
 
 label.state-table-column {
   padding-top: 5px;
-}
-
-label.state-table-column input {
-  margin-top: -3px;
 }
 
 @media only screen and (max-width:600px){
