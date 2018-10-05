@@ -5,7 +5,7 @@
   const config = {
     play: true,
     radius: null,
-    step: 0.01,
+    step: 0.03,
   };
 
   /**
