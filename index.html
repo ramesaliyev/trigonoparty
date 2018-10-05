@@ -14,12 +14,12 @@
           <canvas class="canvas" id="canvas" />
         </div>
         <aside class="drawer">
-          <div class="row">
+          <div class="row block">
             <div class="column">
               <button id="togglePlay" class="button">Stop</button>
             </div>
           </div>
-          <details open>
+          <details open class="row">
             <summary>state values</summary>
             <div class="state-table">
               <div class="row state-table-row">
@@ -57,9 +57,9 @@
               </div>
             </div>
           </details>
-          <details open>
+          <details open class="row">
             <summary id="degreeTitle">degree (-)</summary>
-            <div class="row">
+            <div class="row zebra">
               <div class="column">
                 <input id="degreeRange" type="range" min="-1" max="361" step="1" />
               </div>
@@ -68,9 +68,9 @@
               </div>
             </div>
           </details>
-          <details>
+          <details class="row">
             <summary id="radiusTitle">radius (-)</summary>
-            <div class="row">
+            <div class="row zebra">
               <div class="column">
                 <input id="radiusRange" type="range" min="0" max="300" step="5" />
               </div>
@@ -79,14 +79,90 @@
               </div>
             </div>
           </details>
-          <details>
+          <details class="row">
             <summary id="stepTitle">step (-)</summary>
-            <div class="row">
+            <div class="row zebra">
               <div class="column">
                 <input id="stepRange" type="range" min="0" max="1" step="0.01" />
               </div>
               <div class="column input">
                 <input id="stepInput" type="number" min="0" max="1" pattern="\d*" step="0.01" />
+              </div>
+            </div>
+          </details>
+          <details class="row">
+            <summary>draw lines</summary>
+            <div class="state-table">
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  radius <input id="drawRadius" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  x axis <input id="drawXAxis" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  y axis <input id="drawYAxis" type="checkbox" checked />
+                </label>
+              </div>
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  sinus <input id="drawSin" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  cosinus <input id="drawCos" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  tangent <input id="drawTan" type="checkbox" checked />
+                </label>
+              </div>
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  cotangent <input id="drawCot" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  secant <input id="drawSec" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  cosecant <input id="drawCsc" type="checkbox" checked />
+                </label>
+              </div>
+            </div>
+          </details>
+          <details class="row">
+            <summary>draw names</summary>
+            <div class="state-table">
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  radius <input id="drawNameRadius" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  fps <input id="drawNameFPS" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  credits <input id="drawNameCredits" type="checkbox" checked />
+                </label>
+              </div>
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  sinus <input id="drawNameSin" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  cosinus <input id="drawNameCos" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  tangent <input id="drawNameTan" type="checkbox" checked />
+                </label>
+              </div>
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  cotangent <input id="drawNameCot" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  secant <input id="drawNameSec" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  cosecant <input id="drawNameCsc" type="checkbox" checked />
+                </label>
               </div>
             </div>
           </details>

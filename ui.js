@@ -6,6 +6,15 @@
   };
   
   // DOM Collections.
+  const checkboxElements = [
+    'drawRadius', 'drawXAxis', 'drawYAxis',
+    'drawSin', 'drawCos', 'drawTan',
+    'drawCot', 'drawSec', 'drawCsc',
+    'drawNameRadius', 'drawNameFPS', 'drawNameCredits',
+    'drawNameSin', 'drawNameCos', 'drawNameTan',
+    'drawNameCot', 'drawNameSec', 'drawNameCsc',
+  ];
+
   const elements = [
     'togglePlay',
     'stateDeg', 'stateRad', 'stateQua',
@@ -14,7 +23,9 @@
     'degreeTitle', 'degreeRange', 'degreeInput',
     'radiusTitle', 'radiusRange', 'radiusInput',
     'stepTitle', 'stepRange', 'stepInput',
+    ...checkboxElements,
   ];
+
   const $el = {};
   
   // Collect all elements.
@@ -39,7 +50,7 @@
       const value = event.target.value;
 
       if (!updateSelfOnly) {
-        tp[collection][key] = +value;
+        window.tp[collection][key] = +value;
       }
 
       if (rangeInput && event.target !== rangeInput) {
@@ -117,4 +128,11 @@
     window.requestAnimationFrame(updateStateValues);
   };
   updateStateValues();
+
+  checkboxElements.forEach(checkbox => {
+    DOM.on($el[checkbox], 'change', function() {
+      const configName = checkbox[4].toLowerCase() + checkbox.substr(5);
+      window.tp.config.draw[configName] = this.checked;
+    });
+  });
 }

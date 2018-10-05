@@ -18,6 +18,10 @@ button, input, details, summary {
   box-sizing: border-box; 
 }
 
+input[type='checkbox'] {
+  width: auto;
+}
+
 button, input {
   border: 1px solid #ccc;
   border-radius: 3px;
@@ -43,7 +47,8 @@ input {
 }
 
 details {
-  padding: 5px 10px
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 summary {
@@ -82,6 +87,8 @@ summary {
 }
 
 .drawer {
+  height: 100%;
+  overflow: auto;
   flex: 0 0 300px;
   display: flex;
   flex-direction: column;
@@ -95,12 +102,17 @@ summary {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 10px 0; 
+  margin-top: 10px; 
+  margin-bottom: 10px; 
+}
+
+.row.zebra {
+  background-color: #fafafa;
 }
 
 .column {
   flex: 1;
-  padding: 0 10px; 
+  margin: 0 10px; 
 }
 
 .column.input {
@@ -111,8 +123,8 @@ summary {
   flex: 0;
 }
 
-.no-padding {
-  padding: 0;
+.block {
+  display: block;
 }
 
 .separator {
@@ -130,11 +142,25 @@ summary {
 .state-table-column {
   font-size: 12px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  background-color: #fafafa;
 }
 
 .state-table-column input {
   margin-top: 5px;
   text-align: center;
+}
+
+label.state-table-column {
+  padding-top: 5px;
+}
+
+label.state-table-column input {
+  margin-top: -3px;
 }
 
 @media only screen and (max-width:600px){
