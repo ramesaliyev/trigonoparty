@@ -13,7 +13,7 @@
       sin: true,
       cos: true,
       tan: true,
-      cos: true,
+      cot: true,
       sec: true,
       csc: true,
       nameRadius: true,
@@ -22,7 +22,7 @@
       nameSin: true,
       nameCos: true,
       nameTan: true,
-      nameCos: true,
+      nameCot: true,
       nameSec: true,
       nameCsc: true,
     }
