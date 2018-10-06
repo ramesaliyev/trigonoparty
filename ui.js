@@ -108,7 +108,7 @@
   DOM.on($el.togglePlay, 'click', () => {
     tp.config.play = !tp.config.play;
     $el.togglePlay.innerText = tp.config.play ? 'Stop' : 'Start';
-    tp.draw();
+    //tp.draw();
   });
 
   const updateStateValues = () => {
