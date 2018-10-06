@@ -70,7 +70,8 @@
    */
   const tPI = 2 * Math.PI; 
   const COLORS = {
-    gray: '#CCC',
+    white: '#fff',
+    gray: '#ccc',
     night: '#34495e',
     green: '#00B52A',
     purple: '#8700b5',
@@ -203,7 +204,8 @@
     const cotY = evenQuad ? (lineY - cotDistance) : (lineY + cotDistance);
 
     // Clear canvas.
-    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = COLORS.white;
+    ctx.fillRect(0, 0, w, h);
     
     // Draw X Axis
     config.draw.xAxis && $drawLine(0, y, w, y, { color: COLORS.gray });
