@@ -90,6 +90,7 @@ summary {
 }
 
 .drawer {
+  z-index: 2;
   height: 100%;
   overflow: auto;
   flex: 0 0 300px;
