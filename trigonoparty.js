@@ -164,7 +164,7 @@
   /**
    * Draw scene.
    */
-  const draw = () => {
+  const draw = (once) => {
     // Constants
     const w = canvas.width;
     const h = canvas.height;
@@ -282,7 +282,7 @@
     state.quadrant = quadrant;
 
     // Animate!
-    window.requestAnimationFrame(draw);
+    !once && window.requestAnimationFrame(() => draw());
   };
 
   /**
@@ -300,7 +300,7 @@
     state.degree = degree;
     
     // Force draw to avoid glitches!
-    draw();
+    draw(true);
   };
 
   /**
