@@ -298,6 +298,9 @@
     }
     
     state.degree = degree;
+    
+    // Force draw to avoid glitches!
+    draw();
   };
 
   /**
