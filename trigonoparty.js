@@ -148,6 +148,11 @@
   let lastDrawTime = performance.now();
   let lastFPSUpdateTime = lastDrawTime;
 
+  const resetFPS = () => {
+    FPS = 0;
+    lastDrawTime = lastFPSUpdateTime = performance.now();
+  };
+
   const calculateFPS = () => {
     const now = performance.now();
 
@@ -257,7 +262,7 @@
     }
 
     // Calculate FPS.
-    config.draw.nameFPS && config.play && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
+    config.draw.nameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
 
     // Draw name of author and help.
     config.draw.nameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
@@ -323,6 +328,7 @@
 
   document.body.addEventListener('mouseup', () => {
     $state.drag = false;
+    resetFPS();
   });
 
   /**
@@ -332,12 +338,20 @@
   draw();
 
   /**
+   * Helper functions.
+   */
+  const togglePlay = () => {
+    config.play = !config.play;
+    resetFPS();
+  };
+
+  /**
    * Export to window!
    */
   window.addEventListener('resize', resize);
   window.tp = {
     config,
-    draw,
     state,
+    togglePlay,
   };
 }

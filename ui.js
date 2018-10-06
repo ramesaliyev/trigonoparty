@@ -106,9 +106,8 @@
   createControlCluster('step', 'config', 'step');
 
   DOM.on($el.togglePlay, 'click', () => {
-    tp.config.play = !tp.config.play;
+    tp.togglePlay();
     $el.togglePlay.innerText = tp.config.play ? 'Stop' : 'Start';
-    //tp.draw();
   });
 
   const updateStateValues = () => {
