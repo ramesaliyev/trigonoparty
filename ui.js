@@ -138,12 +138,7 @@
 
   checkboxElements.forEach(checkbox => {
     DOM.on($el[checkbox], 'change', function() {
-      if (checkbox.startsWith('draw')) {
-        const configName = checkbox[4].toLowerCase() + checkbox.substr(5);
-        window.tp.config.draw[configName] = this.checked;
-      } else {
-        window.tp.config[checkbox] = this.checked;
-      }
+      window.tp.config[checkbox] = this.checked;
     });
   });
 }

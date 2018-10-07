@@ -7,26 +7,24 @@
     radius: null,
     step: 0.03,
     roundNumbers: true,
-    draw: {
-      radius: true,
-      xAxis: true,
-      yAxis: true,
-      sin: true,
-      cos: true,
-      tan: true,
-      cot: true,
-      sec: true,
-      csc: true,
-      nameRadius: true,
-      nameFPS: true,
-      nameCredits: true,
-      nameSin: true,
-      nameCos: true,
-      nameTan: true,
-      nameCot: true,
-      nameSec: true,
-      nameCsc: true,
-    }
+    drawRadius: true,
+    drawXAxis: true,
+    drawYAxis: true,
+    drawSin: true,
+    drawCos: true,
+    drawTan: true,
+    drawCot: true,
+    drawSec: true,
+    drawCsc: true,
+    drawNameRadius: true,
+    drawNameFPS: true,
+    drawNameCredits: true,
+    drawNameSin: true,
+    drawNameCos: true,
+    drawNameTan: true,
+    drawNameCot: true,
+    drawNameSec: true,
+    drawNameCsc: true,
   };
 
   /**
@@ -225,9 +223,9 @@
     $drawCircle(x, y, 20, { color: COLORS.snow, fill: true });
     
     // Draw X Axis
-    config.draw.xAxis && $drawLine(0, y, w, y, { color: COLORS.gray });
+    config.drawXAxis && $drawLine(0, y, w, y, { color: COLORS.gray });
     // Draw Y Axis
-    config.draw.yAxis && $drawLine(x, 0, x, h, { color: COLORS.gray });
+    config.drawYAxis && $drawLine(x, 0, x, h, { color: COLORS.gray });
 
     // Draw theta angle circle fill and stroke.
     $drawCircle(x, y, 20, { color: COLORS.greenLight, fill: true, endAngle: degToRad(360 - degree) });
@@ -235,7 +233,7 @@
     $drawText(x + 20, y - 15, `θ`, { color: COLORS.greenDark, align: 'left' });
 
     // Draw Radius Line
-    config.draw.radius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
+    config.drawRadius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
 
     // Draw origin point.
     $drawCircle(x, y, 3, { color: COLORS.night, fill: true });
@@ -247,40 +245,40 @@
     // Dont draw on right angles.
     if (degree % 90) {
       // Draw Sinus.
-      config.draw.sin && $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
+      config.drawSin && $drawLine(lineX, lineY, lineX, y, { color: COLORS.purple });
       // Draw Cosinus.
-      config.draw.cos && $drawLine(lineX, lineY, x, lineY, { color: COLORS.green });
+      config.drawCos && $drawLine(lineX, lineY, x, lineY, { color: COLORS.green });
       // Draw Tangent.
-      config.draw.tan && $drawLine(tanX, y, lineX, lineY, { color: COLORS.orange });
+      config.drawTan && $drawLine(tanX, y, lineX, lineY, { color: COLORS.orange });
       // Draw Cotangent.
-      config.draw.cot && $drawLine(lineX, lineY, x, cotY, { color: COLORS.pink });
+      config.drawCot && $drawLine(lineX, lineY, x, cotY, { color: COLORS.pink });
       // Draw Secant.
-      config.draw.sec && $drawLine(tanX, y, x, y, { color: COLORS.blue });
+      config.drawSec && $drawLine(tanX, y, x, y, { color: COLORS.blue });
       // Draw Cosecant.
-      config.draw.csc && $drawLine(x, cotY, x, y, { color: COLORS.cyan });
+      config.drawCsc && $drawLine(x, cotY, x, y, { color: COLORS.cyan });
 
       // Draw radius text.
-      config.draw.nameRadius && $drawText(x + (lineX - x) / 2, y + (lineY - y) / 2, 'radius', { color: COLORS.night, angle: -degree });
+      config.drawNameRadius && $drawText(x + (lineX - x) / 2, y + (lineY - y) / 2, 'radius', { color: COLORS.night, angle: -degree });
       // Draw sinus text.
-      config.draw.nameSin && $drawText(lineX + 1, y + (lineY - y) / 2, 'sinus', { color: COLORS.purple, angle: 90 });
+      config.drawNameSin && $drawText(lineX + 1, y + (lineY - y) / 2, 'sinus', { color: COLORS.purple, angle: 90 });
       // Draw cosinus text.
-      config.draw.nameCos && $drawText(x + (lineX - x) / 2, lineY - 2, 'cosinus', { color: COLORS.green });
+      config.drawNameCos && $drawText(x + (lineX - x) / 2, lineY - 2, 'cosinus', { color: COLORS.green });
       // Draw tangent text.
-      config.draw.nameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, 'tangent', { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
+      config.drawNameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, 'tangent', { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
       // Draw cotangent text.
-      config.draw.nameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, 'cotangent', { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
+      config.drawNameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, 'cotangent', { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
       // Draw secant text.
-      config.draw.nameSec && $drawText(x + (tanX - x) / 2, y + 17, 'secant', { color: COLORS.blue });
+      config.drawNameSec && $drawText(x + (tanX - x) / 2, y + 17, 'secant', { color: COLORS.blue });
       // Draw cosecant text.
-      config.draw.nameCsc && $drawText(x - 17, y + (cotY - y) / 2, 'cosecant', { color: COLORS.cyan, angle: 90 });
+      config.drawNameCsc && $drawText(x - 17, y + (cotY - y) / 2, 'cosecant', { color: COLORS.cyan, angle: 90 });
     }
 
     // Calculate FPS.
-    config.draw.nameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
+    config.drawNameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
 
     // Draw name of author and help.
-    config.draw.nameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
-    config.draw.nameCredits && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
+    config.drawNameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
+    config.drawNameCredits && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
 
     // Increase degre.
     config.play && !$state.drag && (state.degree += step);
