@@ -71,8 +71,11 @@
   const tPI = 2 * Math.PI; 
   const COLORS = {
     white: '#fff',
+    snow: '#fafafa',
     gray: '#ccc',
     night: '#34495e',
+    greenLight: '#E3F2E6',
+    greenDark: '#179746',
     green: '#00B52A',
     purple: '#8700b5',
     orange: '#f48c42',
@@ -132,12 +135,15 @@
     ctx.stroke();
   };
 
-  const $drawCircle = (x, y, r, { color, fill }) => {
+  const $drawCircle = (x, y, r, { color, fill, startAngle = 0, endAngle = tPI, aCW = true }) => {
+    ctx.moveTo(x, y);
+    ctx.beginPath();
+    fill && ctx.moveTo(x, y);
+    ctx.arc(x, y, r, startAngle, endAngle, aCW);
+    fill && ctx.closePath();
     ctx.lineWidth = 1.5; // Default for now.
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, tPI);
     fill ? ctx.fill() : ctx.stroke();
   };
 
@@ -212,24 +218,31 @@
     ctx.fillStyle = COLORS.white;
     ctx.fillRect(0, 0, w, h);
     
+    // Draw main circle.
+    $drawCircle(x, y, r, { color: COLORS.gray });
+    // Draw core main filled circle.
+    $drawCircle(x, y, 20, { color: COLORS.snow, fill: true });
+    
     // Draw X Axis
     config.draw.xAxis && $drawLine(0, y, w, y, { color: COLORS.gray });
     // Draw Y Axis
     config.draw.yAxis && $drawLine(x, 0, x, h, { color: COLORS.gray });
+
+    // Draw theta angle circle fill and stroke.
+    $drawCircle(x, y, 20, { color: COLORS.greenLight, fill: true, endAngle: degToRad(360 - degree) });
+    $drawCircle(x, y, 20, { color: COLORS.greenDark, endAngle: degToRad(360 - degree) });
+    $drawText(x + 20, y - 15, `θ`, { color: COLORS.greenDark, align: 'left' });
+
     // Draw Radius Line
     config.draw.radius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
 
-    // Draw main circle.
-    $drawCircle(x, y, r, { color: COLORS.gray });
     // Draw origin point.
-    $drawCircle(x, y, 5, { color: COLORS.gray, fill: true });
-    // Draw origin point perimeter circle.
-    $drawCircle(x, y, 20, { color: COLORS.gray });
+    $drawCircle(x, y, 3, { color: COLORS.night, fill: true });
     // Draw radius line end circle.
-    $drawCircle(lineX, lineY, 5, { color: COLORS.gray, fill: true });
+    $drawCircle(lineX, lineY, 3, { color: COLORS.night, fill: true });
     // Draw radius line end perimeter circle.
     $drawCircle(lineX, lineY, 10, { color: COLORS.gray });
-    
+
     // Dont draw on right angles.
     if (degree % 90) {
       // Draw Sinus.
