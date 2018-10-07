@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Trigonoparty!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no"/>
-    <link rel="stylesheet" type="text/css" href="styles.css?v=anticache.13" />
+    <link rel="stylesheet" type="text/css" href="styles.css?v=anticache.15" />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -19,7 +19,6 @@
               <button id="togglePlay" class="button">Stop</button>
             </div>
           </div>
-
           <details class="row">
             <summary>general options</summary>
             <div class="state-table">
@@ -30,7 +29,6 @@
               </div>
             </div>
           </details>
-
           <details open class="row">
             <summary>state values</summary>
             <div class="state-table">
@@ -69,7 +67,7 @@
               </div>
             </div>
           </details>
-          <details open class="row">
+          <details class="row">
             <summary id="degreeTitle">angle θ (-)</summary>
             <div class="row zebra">
               <div class="column">
@@ -106,36 +104,42 @@
             <summary>draw lines</summary>
             <div class="state-table">
               <div class="row state-table-row">
+                <label class="column state-table-column hidden-checkbox">
+                  uncheck all <input id="drawNoLines" type="checkbox" />
+                </label>
+              </div>
+              <div class="column separator"></div>
+              <div class="row state-table-row">
                 <label class="column state-table-column">
-                  radius <input id="drawRadius" type="checkbox" checked />
+                  radius <input id="drawLineRadius" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  x axis <input id="drawXAxis" type="checkbox" checked />
+                  x axis <input id="drawLineXAxis" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  y axis <input id="drawYAxis" type="checkbox" checked />
+                  y axis <input id="drawLineYAxis" type="checkbox" checked />
                 </label>
               </div>
               <div class="row state-table-row">
                 <label class="column state-table-column">
-                  sinus <input id="drawSin" type="checkbox" checked />
+                  sinus <input id="drawLineSin" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  cosinus <input id="drawCos" type="checkbox" checked />
+                  cosinus <input id="drawLineCos" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  tangent <input id="drawTan" type="checkbox" checked />
+                  tangent <input id="drawLineTan" type="checkbox" checked />
                 </label>
               </div>
               <div class="row state-table-row">
                 <label class="column state-table-column">
-                  cotangent <input id="drawCot" type="checkbox" checked />
+                  cotangent <input id="drawLineCot" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  secant <input id="drawSec" type="checkbox" checked />
+                  secant <input id="drawLineSec" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
-                  cosecant <input id="drawCsc" type="checkbox" checked />
+                  cosecant <input id="drawLineCsc" type="checkbox" checked />
                 </label>
               </div>
             </div>
@@ -144,9 +148,12 @@
             <summary>draw names</summary>
             <div class="state-table">
               <div class="row state-table-row">
-                <label class="column state-table-column">
-                  disable all <input id="drawNoNames" type="checkbox" />
+                <label class="column state-table-column hidden-checkbox">
+                  uncheck all <input id="drawNoNames" type="checkbox" />
                 </label>
+              </div>
+              <div class="column separator"></div>
+              <div class="row state-table-row">
                 <label class="column state-table-column">
                   full names <input id="drawFullNames" type="checkbox" checked />
                 </label>
@@ -154,13 +161,23 @@
               <div class="column separator"></div>
               <div class="row state-table-row">
                 <label class="column state-table-column">
-                  radius <input id="drawNameRadius" type="checkbox" checked />
-                </label>
-                <label class="column state-table-column">
                   fps <input id="drawNameFPS" type="checkbox" checked />
                 </label>
                 <label class="column state-table-column">
+                  info <input id="drawNameInfo" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
                   credits <input id="drawNameCredits" type="checkbox" checked />
+                </label>
+              </div>
+              <div class="row state-table-row">
+                <label class="column state-table-column">
+                  radius <input id="drawNameRadius" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
+                  theta <input id="drawNameTheta" type="checkbox" checked />
+                </label>
+                <label class="column state-table-column">
                 </label>
               </div>
               <div class="row state-table-row">
@@ -196,8 +213,8 @@
         </aside>
       </div>
     </div>
-    <script src="trigonoparty.js?v=anticache.14"></script>
-    <script src="ui.js?v=anticache.13"></script>
+    <script src="trigonoparty.js?v=anticache.15"></script>
+    <script src="ui.js?v=anticache.15"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>

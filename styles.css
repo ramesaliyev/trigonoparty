@@ -155,6 +155,7 @@ summary, .overflow-ellipsis {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  align-self: stretch;
   border-radius: 3px;
   background-color: #fafafa;
 }
@@ -166,6 +167,15 @@ summary, .overflow-ellipsis {
 
 label.state-table-column {
   padding-top: 5px;
+}
+
+label.state-table-column.hidden-checkbox {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+label.state-table-column.hidden-checkbox input[type="checkbox"] {
+  display: none;
 }
 
 @media only screen and (max-width:600px){

@@ -12,11 +12,12 @@
   // DOM Collections.
   const checkboxElements = [
     'roundNumbers',
-    'drawNoNames', 'drawFullNames',
-    'drawRadius', 'drawXAxis', 'drawYAxis',
-    'drawSin', 'drawCos', 'drawTan',
-    'drawCot', 'drawSec', 'drawCsc',
-    'drawNameRadius', 'drawNameFPS', 'drawNameCredits',
+    'drawFullNames',
+    'drawLineRadius', 'drawLineXAxis', 'drawLineYAxis',
+    'drawLineSin', 'drawLineCos', 'drawLineTan',
+    'drawLineCot', 'drawLineSec', 'drawLineCsc',
+    'drawNameFPS', 'drawNameInfo', 'drawNameCredits',
+    'drawNameRadius', 'drawNameTheta',
     'drawNameSin', 'drawNameCos', 'drawNameTan',
     'drawNameCot', 'drawNameSec', 'drawNameCsc',
   ];
@@ -29,6 +30,7 @@
     'degreeTitle', 'degreeRange', 'degreeInput',
     'radiusTitle', 'radiusRange', 'radiusInput',
     'stepTitle', 'stepRange', 'stepInput',
+    'drawNoLines', 'drawNoNames', 
     ...checkboxElements,
   ];
 
@@ -141,5 +143,31 @@
     DOM.on($el[checkbox], 'change', function() {
       window.tp.config[checkbox] = this.checked;
     });
+  });
+
+  const setBulkCheckbox = (el, collection) => {
+    collection.forEach(item => {
+      tp.config[item] = $el[item].checked = !el.checked;
+    });
+
+    el.parentElement.childNodes[0].nodeValue =
+      el.checked ? 'check all' : 'uncheck all';
+  };
+
+  DOM.on($el.drawNoLines, 'click', function () {
+    setBulkCheckbox(this, [
+      'drawLineRadius', 'drawLineXAxis', 'drawLineYAxis',
+      'drawLineSin', 'drawLineCos', 'drawLineTan',
+      'drawLineCot', 'drawLineSec', 'drawLineCsc',
+    ]);
+  });
+
+  DOM.on($el.drawNoNames, 'click', function () {
+    setBulkCheckbox(this, [
+      'drawNameFPS', 'drawNameInfo', 'drawNameCredits', 
+      'drawNameRadius', 'drawNameTheta', 
+      'drawNameSin', 'drawNameCos', 'drawNameTan',
+      'drawNameCot', 'drawNameSec', 'drawNameCsc',
+    ]);
   });
 }
