@@ -16,6 +16,8 @@
     drawCot: true,
     drawSec: true,
     drawCsc: true,
+    drawNoNames: false,
+    drawFullNames: true,
     drawNameRadius: true,
     drawNameFPS: true,
     drawNameCredits: true,
@@ -25,6 +27,47 @@
     drawNameCot: true,
     drawNameSec: true,
     drawNameCsc: true,
+  };
+
+  /**
+   * Constants
+   */
+  const tPI = 2 * Math.PI; 
+  
+  const COLORS = {
+    white: '#fff',
+    snow: '#fafafa',
+    gray: '#ccc',
+    night: '#34495e',
+    greenLight: '#E3F2E6',
+    greenDark: '#179746',
+    green: '#00B52A',
+    purple: '#8700b5',
+    orange: '#f48c42',
+    pink: '#f4427a',
+    blue: '#4286f4',
+    cyan: '#41cdf4',
+  };
+
+  const NAMES = {
+    full: {
+      sin: 'sinus',
+      cos: 'cosinus',
+      tan: 'tangent',
+      cot: 'cotangent',
+      sec: 'secant',
+      csc: 'cosecant',
+      r: 'radius',
+    },
+    short: {
+      sin: 'sin',
+      cos: 'cos',
+      tan: 'tan',
+      cot: 'cot',
+      sec: 'sec',
+      csc: 'csc',
+      r: 'r',
+    },
   };
 
   /**
@@ -48,41 +91,7 @@
    */
   const canvasWrapper = document.querySelector(".canvas-wrapper");
   const canvas = document.querySelector("canvas");
-
-  /**
-   * Resize handler.
-   * Check if size actually changed.
-   */
-  const resize = () => {
-    const width = canvasWrapper.clientWidth;
-    const height = canvasWrapper.clientHeight;
-    
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-      config.radius = null;
-    }
-  };
-
-  /**
-   * Consts
-   */
-  const tPI = 2 * Math.PI; 
-  const COLORS = {
-    white: '#fff',
-    snow: '#fafafa',
-    gray: '#ccc',
-    night: '#34495e',
-    greenLight: '#E3F2E6',
-    greenDark: '#179746',
-    green: '#00B52A',
-    purple: '#8700b5',
-    orange: '#f48c42',
-    pink: '#f4427a',
-    blue: '#4286f4',
-    cyan: '#41cdf4',
-  };
-
+  
   /**
    * Helper utils.
    */
@@ -213,6 +222,9 @@
     const tanX = evenQuad ? (lineX + tanDistance) : (lineX - tanDistance);
     const cotY = evenQuad ? (lineY - cotDistance) : (lineY + cotDistance);
 
+    // Determine names.
+    const name = config.drawFullNames ? NAMES.full : NAMES.short;
+
     // Clear canvas.
     ctx.fillStyle = COLORS.white;
     ctx.fillRect(0, 0, w, h);
@@ -230,7 +242,10 @@
     // Draw theta angle circle fill and stroke.
     $drawCircle(x, y, 20, { color: COLORS.greenLight, fill: true, endAngle: degToRad(360 - degree) });
     $drawCircle(x, y, 20, { color: COLORS.greenDark, endAngle: degToRad(360 - degree) });
-    $drawText(x + 20, y - 15, `θ`, { color: COLORS.greenDark, align: 'left' });
+
+    if (!config.drawNoNames) {
+      $drawText(x + 20, y - 15, `θ`, { color: COLORS.greenDark, align: 'left' });
+    }
 
     // Draw Radius Line
     config.drawRadius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
@@ -257,28 +272,32 @@
       // Draw Cosecant.
       config.drawCsc && $drawLine(x, cotY, x, y, { color: COLORS.cyan });
 
-      // Draw radius text.
-      config.drawNameRadius && $drawText(x + (lineX - x) / 2, y + (lineY - y) / 2, 'radius', { color: COLORS.night, angle: -degree });
-      // Draw sinus text.
-      config.drawNameSin && $drawText(lineX + 1, y + (lineY - y) / 2, 'sinus', { color: COLORS.purple, angle: 90 });
-      // Draw cosinus text.
-      config.drawNameCos && $drawText(x + (lineX - x) / 2, lineY - 2, 'cosinus', { color: COLORS.green });
-      // Draw tangent text.
-      config.drawNameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, 'tangent', { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
-      // Draw cotangent text.
-      config.drawNameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, 'cotangent', { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
-      // Draw secant text.
-      config.drawNameSec && $drawText(x + (tanX - x) / 2, y + 17, 'secant', { color: COLORS.blue });
-      // Draw cosecant text.
-      config.drawNameCsc && $drawText(x - 17, y + (cotY - y) / 2, 'cosecant', { color: COLORS.cyan, angle: 90 });
+      if (!config.drawNoNames) {
+        // Draw radius text.
+        config.drawNameRadius && $drawText(x + (lineX - x) / 2, y + (lineY - y) / 2, name.r, { color: COLORS.night, angle: -degree });
+        // Draw sinus text.
+        config.drawNameSin && $drawText(lineX + 1, y + (lineY - y) / 2, name.sin, { color: COLORS.purple, angle: 90 });
+        // Draw cosinus text.
+        config.drawNameCos && $drawText(x + (lineX - x) / 2, lineY - 2, name.cos, { color: COLORS.green });
+        // Draw tangent text.
+        config.drawNameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, name.tan, { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
+        // Draw cotangent text.
+        config.drawNameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, name.cot, { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
+        // Draw secant text.
+        config.drawNameSec && $drawText(x + (tanX - x) / 2, y + 17, name.sec, { color: COLORS.blue });
+        // Draw cosecant text.
+        config.drawNameCsc && $drawText(x - 17, y + (cotY - y) / 2, name.csc, { color: COLORS.cyan, angle: 90 });  
+      }
     }
 
-    // Calculate FPS.
-    config.drawNameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });
-
-    // Draw name of author and help.
-    config.drawNameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
-    config.drawNameCredits && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
+    if (!config.drawNoNames) {
+      // Calculate FPS.
+      config.drawNameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });  
+      
+      // Draw name of author and help.
+      config.drawNameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
+      config.drawNameCredits && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
+    }
 
     // Increase degre.
     config.play && !$state.drag && (state.degree += step);
@@ -344,13 +363,28 @@
   });
 
   /**
+   * Resize handler.
+   * Check if size actually changed.
+   */
+  const resize = () => {
+    const width = canvasWrapper.clientWidth;
+    const height = canvasWrapper.clientHeight;
+    
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      config.radius = null;
+    }
+  };
+
+  /**
    * Kick start!
    */
   resize();
   draw();
 
   /**
-   * Helper functions.
+   * Exported helper functions.
    */
   const togglePlay = () => {
     config.play = !config.play;

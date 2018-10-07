@@ -12,6 +12,7 @@
   // DOM Collections.
   const checkboxElements = [
     'roundNumbers',
+    'drawNoNames', 'drawFullNames',
     'drawRadius', 'drawXAxis', 'drawYAxis',
     'drawSin', 'drawCos', 'drawTan',
     'drawCot', 'drawSec', 'drawCsc',
