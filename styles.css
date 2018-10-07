@@ -58,6 +58,12 @@ summary {
   height: 22px;
 }
 
+summary, .overflow-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .root {
   display: flex;
   justify-content: center;

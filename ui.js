@@ -5,8 +5,13 @@
     on: (element, event, fn) => element.addEventListener(event, fn),
   };
   
+  const toFixed = (value, to = 3, force) => (
+    (tp.config.roundNumbers || force) ? (+value).toFixed(to).padEnd(to, 0) : value
+  );
+
   // DOM Collections.
   const checkboxElements = [
+    'roundNumbers',
     'drawRadius', 'drawXAxis', 'drawYAxis',
     'drawSin', 'drawCos', 'drawTan',
     'drawCot', 'drawSec', 'drawCsc',
@@ -37,7 +42,7 @@
     collection,
     label,
     {
-      toFixed,
+      fixTo,
       updateOnResize,
       updateOnEveryFrame,
     } = {}
@@ -47,7 +52,7 @@
     const labelEl = $el[`${key}Title`];
 
     const eventListener = (event, updateSelfOnly) => {
-      const value = event.target.value;
+      const value = toFixed(event.target.value, fixTo);
 
       if (!updateSelfOnly) {
         window.tp[collection][key] = +value;
@@ -68,13 +73,7 @@
     };
   
     const getAndSetValue = () => {
-      let initialValue = tp[collection][key];
-
-      if (typeof toFixed !== 'undefined') {
-        initialValue = initialValue.toFixed(toFixed)
-      }
-      
-      eventListener({ target: { value: initialValue } }, true);
+      eventListener({ target: { value: tp[collection][key] } }, true);
 
       if (updateOnEveryFrame) {
         window.requestAnimationFrame(getAndSetValue);
@@ -99,18 +98,19 @@
   createControlCluster(
     'degree', 'state',
     value => `angle θ (${value}deg)`,
-    { toFixed: 0, updateOnEveryFrame: true, }
+    { fixTo: 0, updateOnEveryFrame: true, }
   );
 
   createControlCluster(
     'radius', 'config',
     value => `radius scale (x${value})`,
-    { toFixed: 0, updateOnResize: true, }
+    { fixTo: 0, updateOnResize: true, }
   );
 
   createControlCluster(
     'step', 'config',
-    value => `step by frame (${value}deg)`
+    value => `step by frame (${value}deg)`,
+    { fixTo: 2, }
   );
 
   DOM.on($el.togglePlay, 'click', () => {
@@ -119,18 +119,18 @@
   });
 
   const updateStateValues = () => {
-    const sin = +tp.state.sin.toFixed(3);
-    const cos = +tp.state.cos.toFixed(3);
+    const sin = +toFixed(tp.state.sin);
+    const cos = +toFixed(tp.state.cos);
 
-    $el.stateDeg.value = tp.state.degree.toFixed(3);
-    $el.stateRad.value = tp.state.degreeInRad.toFixed(3);
+    $el.stateDeg.value = toFixed(tp.state.degree);
+    $el.stateRad.value = toFixed(tp.state.degreeInRad);
     $el.stateQua.value = tp.state.quadrant;
-    $el.stateSin.value = sin.toFixed(3);
-    $el.stateCos.value = cos.toFixed(3);
-    $el.stateTan.value = cos === 0 ? 'Undefined' : (sin / cos).toFixed(3);
-    $el.stateCot.value = sin === 0 ? 'Undefined' : (cos / sin).toFixed(3);
-    $el.stateSec.value = cos === 0 ? 'Undefined' : (1 / cos).toFixed(3);
-    $el.stateCsc.value = sin === 0 ? 'Undefined' : (1 / sin).toFixed(3);
+    $el.stateSin.value = toFixed(sin);
+    $el.stateCos.value = toFixed(cos);
+    $el.stateTan.value = cos === 0 ? 'Undefined' : toFixed(sin / cos);
+    $el.stateCot.value = sin === 0 ? 'Undefined' : toFixed(cos / sin);
+    $el.stateSec.value = cos === 0 ? 'Undefined' : toFixed(1 / cos);
+    $el.stateCsc.value = sin === 0 ? 'Undefined' : toFixed(1 / sin);
 
     window.requestAnimationFrame(updateStateValues);
   };
@@ -138,8 +138,12 @@
 
   checkboxElements.forEach(checkbox => {
     DOM.on($el[checkbox], 'change', function() {
-      const configName = checkbox[4].toLowerCase() + checkbox.substr(5);
-      window.tp.config.draw[configName] = this.checked;
+      if (checkbox.startsWith('draw')) {
+        const configName = checkbox[4].toLowerCase() + checkbox.substr(5);
+        window.tp.config.draw[configName] = this.checked;
+      } else {
+        window.tp.config[checkbox] = this.checked;
+      }
     });
   });
 }

@@ -6,6 +6,7 @@
     play: true,
     radius: null,
     step: 0.03,
+    roundNumbers: true,
     draw: {
       radius: true,
       xAxis: true,
