@@ -178,6 +178,10 @@ label.state-table-column.hidden-checkbox input[type="checkbox"] {
   display: none;
 }
 
+.github-button {
+  color: #fff;
+}
+
 @media only screen and (max-width:600px){
   html, body, .root {
     overflow: auto;

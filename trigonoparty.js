@@ -108,35 +108,68 @@
   /**
    * Drawing helpers.
    */
-  const $drawText = (x, y, text, {
-    color = COLORS.gray,
-    size = 14,
-    angle = 0,
-    align = 'center',
-    baseline = 'bottom',
-  } = {}) => {
-    ctx.font = `${size}px sans-serif`;
+  const withAngle = (x, y, angle, fn) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(degToRad(angle));
+
+    fn();
+
+    ctx.restore();
+  };
+
+  const $drawText = (x, y, text, options = {}) => {
+    const {
+      color = COLORS.gray,
+      size = 14,
+      angle = 0,
+      align = 'center',
+      baseline = 'bottom',
+    } = options;
 
     if (angle) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(degToRad(angle));
-      x = 0;
-      y = 0;
+      options.angle = false;
+      
+      return withAngle(x, y, angle, () =>
+        $drawText(0, 0, text, options)
+      );
     }
 
+    ctx.font = `${size}px sans-serif`;
     ctx.textBaseline = baseline;
     ctx.textAlign = align;
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
-
-    if (angle) {
-      ctx.restore();
-    }
   };
 
-  const $drawLine = (fromX, fromY, toX, toY, { color }) => {
-    ctx.lineWidth = 1.5; // Default for now.
+  const $drawRect = (x, y, w, h, options = {}) => {
+    const {
+      color = COLORS.gray,
+      angle = 0,
+      fill = false,
+      lineWidth = 1.5,
+    } = options;
+
+    if (angle) {
+      options.angle = false;
+      
+      return withAngle(x, y, angle, () =>
+        $drawRect(0, 0, w, h, options)
+      );
+    }
+
+    ctx.lineWidth = lineWidth,
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.rect(x, y, w, h);
+    fill ? ctx.fill() : ctx.stroke();
+  }; 
+
+  const $drawLine = (fromX, fromY, toX, toY, {
+    color,
+    lineWidth,
+  }) => {
+    ctx.lineWidth = lineWidth;
     ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
@@ -144,15 +177,22 @@
     ctx.stroke();
   };
 
-  const $drawCircle = (x, y, r, { color, fill, startAngle = 0, endAngle = tPI, aCW = true }) => {
+  const $drawCircle = (x, y, r, {
+    color,
+    fill,
+    startAngle = 0,
+    endAngle = tPI,
+    aCW = true,
+    lineWidth = 1.5,
+  }) => {
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
     ctx.moveTo(x, y);
     ctx.beginPath();
     fill && ctx.moveTo(x, y);
     ctx.arc(x, y, r, startAngle, endAngle, aCW);
     fill && ctx.closePath();
-    ctx.lineWidth = 1.5; // Default for now.
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
     fill ? ctx.fill() : ctx.stroke();
   };
 
@@ -223,6 +263,9 @@
     const tanX = evenQuad ? (lineX + tanDistance) : (lineX - tanDistance);
     const cotY = evenQuad ? (lineY - cotDistance) : (lineY + cotDistance);
 
+    // Calculate tangent & cotangent angle.
+    const tanCotAngle = evenQuad ? coDegree : -coDegree;
+
     // Determine names.
     const name = config.drawFullNames ? NAMES.full : NAMES.short;
 
@@ -244,17 +287,20 @@
     $drawCircle(x, y, 20, { color: COLORS.greenLight, fill: true, endAngle: degToRad(360 - degree) });
     $drawCircle(x, y, 20, { color: COLORS.greenDark, endAngle: degToRad(360 - degree) });
 
+    // Draw theta name.
     config.drawNameTheta && $drawText(x + 20, y - 15, `θ`, { color: COLORS.greenDark, align: 'left' });
-
-    // Draw Radius Line
-    config.drawLineRadius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
 
     // Draw origin point.
     $drawCircle(x, y, 3, { color: COLORS.night, fill: true });
-    // Draw radius line end circle.
-    $drawCircle(lineX, lineY, 3, { color: COLORS.night, fill: true });
-    // Draw radius line end perimeter circle.
-    $drawCircle(lineX, lineY, 10, { color: COLORS.gray });
+    
+    // Draw tangent/cotangent & radius right angle square.
+    const rightAngleSquareSide = 12;
+    const rightAngleSquareHeight = quadrant > 2 ? -rightAngleSquareSide : rightAngleSquareSide;
+    $drawRect(lineX, lineY, rightAngleSquareSide, rightAngleSquareHeight, { color: COLORS.gray, angle: tanCotAngle, lineWidth: 1 });
+    $drawRect(lineX, lineY, -rightAngleSquareSide, rightAngleSquareHeight, { color: COLORS.gray, angle: tanCotAngle, lineWidth: 1 });
+
+    // Draw Radius Line
+    config.drawLineRadius && $drawLine(x, y, lineX, lineY, { color: COLORS.night });
 
     // Dont draw on right angles.
     if (degree % 90) {
@@ -278,14 +324,17 @@
       // Draw cosinus text.
       config.drawNameCos && $drawText(x + (lineX - x) / 2, lineY - 2, name.cos, { color: COLORS.green });
       // Draw tangent text.
-      config.drawNameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, name.tan, { color: COLORS.orange, angle: evenQuad ? coDegree : -coDegree });
+      config.drawNameTan && $drawText(lineX + (tanX - lineX) / 2, y - 5 + (lineY - y) / 2, name.tan, { color: COLORS.orange, angle: tanCotAngle });
       // Draw cotangent text.
-      config.drawNameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, name.cot, { color: COLORS.pink, angle: evenQuad ? coDegree : -coDegree });
+      config.drawNameCot && $drawText(x + (lineX - x) / 2, lineY - 5 + (cotY - lineY) / 2, name.cot, { color: COLORS.pink, angle: tanCotAngle });
       // Draw secant text.
       config.drawNameSec && $drawText(x + (tanX - x) / 2, y + 17, name.sec, { color: COLORS.blue });
       // Draw cosecant text.
       config.drawNameCsc && $drawText(x - 17, y + (cotY - y) / 2, name.csc, { color: COLORS.cyan, angle: 90 });  
     }
+
+    // Draw radius line end circle.
+    $drawCircle(lineX, lineY, 3, { color: COLORS.night, fill: true });
 
     // Calculate FPS.
     config.drawNameFPS && config.play && !$state.drag && $drawText(5, 17, `FPS: ${calculateFPS() || '-'}`, { align: 'left' });  
