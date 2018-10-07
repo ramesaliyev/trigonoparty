@@ -104,7 +104,7 @@
 
   createControlCluster(
     'radius', 'config',
-    value => `radius scale (x${value})`,
+    value => `radius scale (${value === '0' ? 'auto' : `x${value}`})`,
     { fixTo: 0, updateOnResize: true, }
   );
 
