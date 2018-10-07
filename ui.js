@@ -35,16 +35,16 @@
   const createControlCluster = (
     key,
     collection,
-    name,
+    label,
     {
       toFixed,
       updateOnResize,
       updateOnEveryFrame,
     } = {}
   ) => {
-    const rangeInput = $el[`${name}Range`];
-    const textInput = $el[`${name}Input`];
-    const label = $el[`${name}Title`];
+    const rangeInput = $el[`${key}Range`];
+    const textInput = $el[`${key}Input`];
+    const labelEl = $el[`${key}Title`];
 
     const eventListener = (event, updateSelfOnly) => {
       const value = event.target.value;
@@ -61,8 +61,9 @@
         textInput.value = value;
       }
 
-      if (label) {
-        label.innerText = `${key} (${value})`;  
+      if (labelEl) {
+        labelEl.innerText = typeof label === 'function' ? 
+          label(value, key) : `${key} (${value})`;  
       }
     };
   
@@ -95,15 +96,22 @@
     updateOnResize && window.addEventListener('resize', () => setTimeout(getAndSetValue));
   }
 
-  createControlCluster('degree', 'state', 'degree', {
-    toFixed: 0, updateOnEveryFrame: true,
-  });
+  createControlCluster(
+    'degree', 'state',
+    value => `angle θ (${value}deg)`,
+    { toFixed: 0, updateOnEveryFrame: true, }
+  );
 
-  createControlCluster('radius', 'config', 'radius', {
-    toFixed: 0, updateOnResize: true,
-  });
+  createControlCluster(
+    'radius', 'config',
+    value => `radius scale (x${value})`,
+    { toFixed: 0, updateOnResize: true, }
+  );
 
-  createControlCluster('step', 'config', 'step');
+  createControlCluster(
+    'step', 'config',
+    value => `step by frame (${value}deg)`
+  );
 
   DOM.on($el.togglePlay, 'click', () => {
     tp.togglePlay();
