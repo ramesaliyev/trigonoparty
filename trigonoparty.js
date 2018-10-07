@@ -313,8 +313,6 @@
     state.degreeInRad = degreeInRad;
     state.sin = -sin;
     state.cos = cos;
-    state.sinHeight = sinHeight;
-    state.cosWidth = cosWidth;
     state.quadrant = quadrant;
 
     // Animate!
