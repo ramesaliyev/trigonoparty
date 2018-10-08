@@ -341,7 +341,12 @@
     
     // Draw name of author and help.
     config.drawNameInfo && $drawText(w - 10, 20, 'You can click & drag!', { align: 'right' });
-    config.drawNameCredits && $drawText(w - 10, h - 10, 'ramesaliyev / trigonoparty / 2018', { align: 'right' });
+    
+    if (config.drawNameCredits) {
+      $drawText(w - 10, h - 42, '2018', { align: 'right' });
+      $drawText(w - 10, h - 27, 'trigonoparty', { align: 'right' });
+      $drawText(w - 10, h - 10, 'ramesaliyev', { align: 'right' });
+    }
 
     // Increase degre.
     config.play && !$state.drag && (state.degree += step);
